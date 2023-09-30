@@ -2,11 +2,12 @@ import '/backend/supabase/supabase.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import 'add_shop_page_widget.dart' show AddShopPageWidget;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-class AddShopPageModel extends FlutterFlowModel {
+class AddShopPageModel extends FlutterFlowModel<AddShopPageWidget> {
   ///  State fields for stateful widgets in this page.
 
   final unfocusNode = FocusNode();
@@ -34,7 +35,7 @@ class AddShopPageModel extends FlutterFlowModel {
       return 'Field is required';
     }
 
-    if (val.length < 1) {
+    if (val.length < 3) {
       return 'You should write ate least 1 character';
     }
 

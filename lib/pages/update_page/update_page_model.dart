@@ -2,11 +2,12 @@ import '/backend/supabase/supabase.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import 'update_page_widget.dart' show UpdatePageWidget;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-class UpdatePageModel extends FlutterFlowModel {
+class UpdatePageModel extends FlutterFlowModel<UpdatePageWidget> {
   ///  State fields for stateful widgets in this page.
 
   final unfocusNode = FocusNode();
@@ -34,7 +35,7 @@ class UpdatePageModel extends FlutterFlowModel {
       return 'Field is required';
     }
 
-    if (val.length < 1) {
+    if (val.length < 4) {
       return 'You should write at least 1 character';
     }
 

@@ -11,10 +11,10 @@ export 'update_page_model.dart';
 class UpdatePageWidget extends StatefulWidget {
   const UpdatePageWidget({
     Key? key,
-    required this.shoprow,
+    required this.update,
   }) : super(key: key);
 
-  final ShopRow? shoprow;
+  final UserRow? update;
 
   @override
   _UpdatePageWidgetState createState() => _UpdatePageWidgetState();
@@ -32,14 +32,15 @@ class _UpdatePageWidgetState extends State<UpdatePageWidget> {
 
     _model.textController1 ??= TextEditingController(
         text: valueOrDefault<String>(
-      widget.shoprow?.title,
+      widget.update?.title,
       'title',
     ));
     _model.textController2 ??= TextEditingController(
         text: valueOrDefault<String>(
-      widget.shoprow?.size?.toString(),
-      '0',
+      widget.update?.name,
+      'name',
     ));
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
   @override
@@ -52,7 +53,9 @@ class _UpdatePageWidgetState extends State<UpdatePageWidget> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => FocusScope.of(context).requestFocus(_model.unfocusNode),
+      onTap: () => _model.unfocusNode.canRequestFocus
+          ? FocusScope.of(context).requestFocus(_model.unfocusNode)
+          : FocusScope.of(context).unfocus(),
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
@@ -163,7 +166,7 @@ class _UpdatePageWidgetState extends State<UpdatePageWidget> {
                           autofocus: true,
                           obscureText: false,
                           decoration: InputDecoration(
-                            labelText: 'Size',
+                            labelText: 'Name',
                             labelStyle:
                                 FlutterFlowTheme.of(context).labelMedium,
                             hintStyle: FlutterFlowTheme.of(context).labelMedium,
@@ -214,26 +217,16 @@ class _UpdatePageWidgetState extends State<UpdatePageWidget> {
                           !_model.formKey.currentState!.validate()) {
                         return;
                       }
-                      await ShopTable().update(
+                      await UserTable().update(
                         data: {
-                          'title': valueOrDefault<String>(
-                            _model.textController1.text,
-                            'title',
-                          ),
-                          'size': valueOrDefault<double>(
-                            double.tryParse(_model.textController2.text),
-                            0.0,
-                          ),
+                          'email': 'test@test.com',
+                          'name': _model.textController2.text,
+                          'title': _model.textController1.text,
                         },
-                        matchingRows: (rows) => rows
-                            .eq(
-                              'title',
-                              widget.shoprow?.title,
-                            )
-                            .eq(
-                              'size',
-                              widget.shoprow?.size,
-                            ),
+                        matchingRows: (rows) => rows.eq(
+                          'id',
+                          widget.update?.id,
+                        ),
                       );
 
                       context.pushNamed('HomePage');

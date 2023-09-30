@@ -27,6 +27,7 @@ class _AddShopPageWidgetState extends State<AddShopPageWidget> {
 
     _model.textController1 ??= TextEditingController();
     _model.textController2 ??= TextEditingController();
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
   @override
@@ -39,7 +40,9 @@ class _AddShopPageWidgetState extends State<AddShopPageWidget> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => FocusScope.of(context).requestFocus(_model.unfocusNode),
+      onTap: () => _model.unfocusNode.canRequestFocus
+          ? FocusScope.of(context).requestFocus(_model.unfocusNode)
+          : FocusScope.of(context).unfocus(),
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
@@ -141,7 +144,7 @@ class _AddShopPageWidgetState extends State<AddShopPageWidget> {
                           autofocus: true,
                           obscureText: false,
                           decoration: InputDecoration(
-                            labelText: 'Size',
+                            labelText: 'Name',
                             labelStyle:
                                 FlutterFlowTheme.of(context).labelMedium,
                             hintStyle: FlutterFlowTheme.of(context).labelMedium,
@@ -194,9 +197,10 @@ class _AddShopPageWidgetState extends State<AddShopPageWidget> {
                           !_model.formKey.currentState!.validate()) {
                         return;
                       }
-                      await ShopTable().insert({
+                      await UserTable().insert({
+                        'email': 'test@test.com',
+                        'name': _model.textController2.text,
                         'title': _model.textController1.text,
-                        'size': double.tryParse(_model.textController2.text),
                       });
 
                       context.pushNamed('HomePage');

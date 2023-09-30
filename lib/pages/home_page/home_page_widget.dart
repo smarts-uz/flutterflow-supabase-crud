@@ -2,6 +2,7 @@ import '/backend/supabase/supabase.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/flutter_flow_widgets.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -25,6 +26,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => HomePageModel());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
   @override
@@ -37,7 +40,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => FocusScope.of(context).requestFocus(_model.unfocusNode),
+      onTap: () => _model.unfocusNode.canRequestFocus
+          ? FocusScope.of(context).requestFocus(_model.unfocusNode)
+          : FocusScope.of(context).unfocus(),
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
@@ -87,9 +92,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
             ),
             child: Padding(
               padding: EdgeInsetsDirectional.fromSTEB(10.0, 10.0, 10.0, 10.0),
-              child: FutureBuilder<List<ShopRow>>(
-                future: (_model.requestCompleter ??= Completer<List<ShopRow>>()
-                      ..complete(ShopTable().queryRows(
+              child: FutureBuilder<List<UserRow>>(
+                future: (_model.requestCompleter ??= Completer<List<UserRow>>()
+                      ..complete(UserTable().queryRows(
                         queryFn: (q) => q,
                       )))
                     .future,
@@ -108,14 +113,14 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                       ),
                     );
                   }
-                  List<ShopRow> listViewShopRowList = snapshot.data!;
+                  List<UserRow> listViewUserRowList = snapshot.data!;
                   return ListView.builder(
                     padding: EdgeInsets.zero,
                     scrollDirection: Axis.vertical,
-                    itemCount: listViewShopRowList.length,
+                    itemCount: listViewUserRowList.length,
                     itemBuilder: (context, listViewIndex) {
-                      final listViewShopRow =
-                          listViewShopRowList[listViewIndex];
+                      final listViewUserRow =
+                          listViewUserRowList[listViewIndex];
                       return Row(
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -125,10 +130,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                valueOrDefault<String>(
-                                  listViewShopRow.title,
-                                  'title',
-                                ),
+                                listViewUserRow.name!,
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
@@ -138,11 +140,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                     ),
                               ),
                               Text(
-                                valueOrDefault<String>(
-                                  dateTimeFormat(
-                                      'd/M/y', listViewShopRow.createdAt),
-                                  'time',
-                                ),
+                                listViewUserRow.title!,
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
@@ -156,10 +154,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Text(
-                                valueOrDefault<String>(
-                                  listViewShopRow.size?.toString(),
-                                  'size',
-                                ),
+                                listViewUserRow.email!,
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
@@ -177,19 +172,15 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                   hoverColor: Colors.transparent,
                                   highlightColor: Colors.transparent,
                                   onTap: () async {
-                                    _model.deleteshop =
-                                        await ShopTable().delete(
+                                    await UserTable().delete(
                                       matchingRows: (rows) => rows.eq(
                                         'id',
-                                        listViewShopRow.id,
+                                        listViewUserRow.id,
                                       ),
-                                      returnRows: true,
                                     );
                                     setState(
                                         () => _model.requestCompleter = null);
                                     await _model.waitForRequestCompleted();
-
-                                    setState(() {});
                                   },
                                   child: Icon(
                                     Icons.delete_outline,
@@ -207,8 +198,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                   context.pushNamed(
                                     'UpdatePage',
                                     queryParameters: {
-                                      'shoprow': serializeParam(
-                                        listViewShopRow,
+                                      'update': serializeParam(
+                                        listViewUserRow,
                                         ParamType.SupabaseRow,
                                       ),
                                     }.withoutNulls,
